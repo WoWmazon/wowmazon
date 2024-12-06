@@ -22,7 +22,6 @@ const ProductList = ({
     return <p>상품없음</p>;
   }
 
-  if (isLoading) return <ProductCardSkeleton />;
   if (isError) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
 
   return (
@@ -30,18 +29,22 @@ const ProductList = ({
       {products.length > 0 ? (
         products
           .filter((product) => product.presentPrice !== null)
-          .map((product, index) => (
-            <ProductCard
-              key={`${product.id}-${index}`}
-              product={product}
-              exchangeRate={exchangeRate}
-            />
-          ))
+          .map((product, index) =>
+            isLoading ? (
+              <ProductCardSkeleton />
+            ) : (
+              <ProductCard
+                key={`${product.id}-${index}`}
+                product={product}
+                exchangeRate={exchangeRate}
+              />
+            )
+          )
       ) : (
         <p>상품이 없습니다.</p>
       )}
-      <div ref={productIntersectionObserverRef}>
-        {isFetchingNextPage && <p>추가 데이터를 로딩 중...</p>}
+      <div ref={productIntersectionObserverRef} className="w-full">
+        {isFetchingNextPage && <ProductCardSkeleton />}
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import ProductCard from "../products/productCard";
 import { getExchangeLatest } from "@/api/exchange/apis";
 import WishListProductCard from "./wish-list-product-card";
 import { useWishEditStore } from "@/stores/prooduct/stores";
+import ProductCardSkeleton from "../skeletons/product-card-skeleton";
 
 const WishList = ({
   products,
@@ -35,7 +36,6 @@ const WishList = ({
     getExchange();
   }, []);
 
-  if (isLoading) return <p>로딩 중...</p>;
   if (isError) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
 
   return (
@@ -45,7 +45,9 @@ const WishList = ({
           .filter((product) => product.presentPrice !== null)
           .map((product, index) => {
             const checked = isChecked(product.favoriteId);
-            return (
+            return isLoading ? (
+              <ProductCardSkeleton />
+            ) : (
               <WishListProductCard
                 key={`${product.id}-${index}`}
                 isEditing={isEditing}
@@ -63,8 +65,8 @@ const WishList = ({
       ) : (
         <p>상품이 없습니다.</p>
       )}
-      <div ref={intersectionObserverRef}>
-        {isFetchingNextPage && <p>추가 데이터를 로딩 중...</p>}
+      <div ref={intersectionObserverRef} className="w-full">
+        {isFetchingNextPage && <ProductCardSkeleton />}
       </div>
     </div>
   );
